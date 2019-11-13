@@ -214,9 +214,10 @@
     $(document).ready(function () {
       $.ajax({
         type: "GET",
-        url: "http://localhost:8081/entries/all",
+        url: "http://localhost:8081/diary/all",
         success: function (response) {
-          console.log(response)
+          console.log(response[0])
+          console.log(response[0].toString('base64'))
         }
       });
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const entryRoute = require('./routes/entries');
+const userRoute = require('./routes/userRoute');
 const cors = require('cors');
 const port = process.env.PORT || 8081;
 const bodyParser = require('body-parser');
@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 });
 
 app.use(cors());
-app.use('/diary', entryRoute);
+app.use('/diary', userRoute);
 
 var upload = multer({
     storage: store.storage
@@ -35,22 +35,23 @@ mongoose.connect(url,{useNewUrlParser: true,useUnifiedTopology: true  })
 })
 .catch(err =>{
     console.log(err)
-})
+});
 
 
 app.post('/diary/add', upload.single('photo'), (req, res, next) => {
     let img = fs.readFileSync(req.file.path);
     let encode_image = img.toString('base64');
-    let finalImg = {
+     finalImg = {
         contentType: req.file.mimetype,
         item: new Buffer.from(encode_image, 'base64')
     };
     let data = {
         title:req.body.title,
         body:req.body.body,
-        img : finalImg
+        img: finalImg.item
     };
-    let entry = new Entry(data);
+    let entry = new Entry(data );
+
     entry.save()
     .then(() => {
         console.log('saved');

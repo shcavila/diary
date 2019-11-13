@@ -8,8 +8,9 @@ var entrySchema = new Schema({
     body: {
         type: String
     },
-    image:{
-        type:Buffer
+    img:{
+        type:Buffer,
+        data:String
     }
 });
 module.exports = mongoose.model('Entry', entrySchema);
