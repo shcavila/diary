@@ -221,15 +221,17 @@
       });
 
       // add new entry to database
-      $('#btnAdd').click(function () {
+      $('#btnAdd').click(function (e) {
+        e.preventDefault()
         let title = $('#title').val();
         let body = $('#body').val();
         let fd = new FormData();
         var files = $('#img')[0].files[0];
         fd.append('photo', files);
-
+        fd.append('title',title)
+        fd.append('body',body)
         $.ajax({
-          url: 'http://127.0.0.1:8081/diary/add/img',
+          url: 'http://localhost:8081/diary/add',
           type: 'POST',
           data: fd,
           contentType: false,
@@ -240,19 +242,7 @@
         });
 
 
-        let data = {
-          title: title,
-          body: body,
-        }
-        $.ajax({
-          type: "POST",
-          data: data,
-          url: "http://localhost:8081/diary/add",
-          success: function (response) {
-            console.log(response)
-          }
-
-        });
+       
 
       });
 
