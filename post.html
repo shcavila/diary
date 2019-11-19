@@ -78,23 +78,32 @@
 
   <!-- Post Content -->
   <div class="content"></div>
-  <div class="card w-75">
-    <h5 class="card-header">Featured</h5>
-    <div class="card-body">
-      <h5 class="card-title">Special title treatment</h5>
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
+  <div class="modal" id="myModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Entry</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- modal body -->
+          <div class="modal-body">
+            <span>Title</span>
+            <br>
+            <input class="form-control" type="text" id="title" />
+            <br>
+            <textarea class="form-control" rows="5" placeholder="Type here" id="body"></textarea>
+            <br>
+            <input type="file" id="img" name="photo" />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" id="btnSave">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <br>
-  <div class="card w-75">
-    <h5 class="card-header">Featured</h5>
-    <div class="card-body">
-      <h5 class="card-title">Special title treatment</h5>
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
-    </div>
-  </div>
   <hr>
 
   <!-- Footer -->
@@ -153,19 +162,57 @@
             console.log(data)
             console.log(response[i]._id)
             //console.log(JSON.stringify(response[i].img))
-            var templateString = `<div class="card w-75"><h5 class="card-header text-center">${response[i].title}</h5><div class="card-body"><p>${response[i].body}</p><button class="btn btn-primary " id="${response[i]._id}">Update</button><button class="btn btn-danger">Delete</button></div></div>`
+            var templateString = `<div class="card w-75"><h5 class="card-header text-center">${response[i].title}</h5><div class="card-body"><p>${response[i].body}</p><button class="btn btn-primary " id="${response[i]._id}">Update</button><button class="btn btn-danger" id="${response[i]._id}">Delete</button></div></div> <br>`
             $('.content').append(templateString);
           })
           console.log(response[0])
           console.log(response[0].toString('base64'))
         }
       });
+      var entryID;
       $(document).on('click', '.btn-primary', function () {
-        alert($(this).attr('id'))
+        entryID = {
+          id: $(this).attr('id')
+        }
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:8081/diary/update",
+          dataType:'json',
+          data: entryID,
+          success: function (response) {
+            console.log(response)
+            $('#myModal').modal('show');
+            $('#title').val(response.title)
+            $('#body').val(response.body)
+          }
+        });
+
+    });
+
+    $(document).on('click', '#btnSave', function () {
+      let title = $('#title').val()
+      let body = $('#body').val()
+      let data = {
+        title:title,
+        body:body
+      }
+        $.ajax({
+          type: "POST",
+          url: `http://localhost:8081/diary/update/${entryID.id}`,
+          dataType:'json',
+          data: data,
+          success: function (response) {
+            console.log(response)
+          }
+        });
+
+    });
+    
+
+    $(document).on('click', '.btn-danger', function () {
         let data= {
           id: $(this).attr('id')
         }
-        alert('clicked')
         $.ajax({
           type: "POST",
           url: "http://localhost:8081/diary/delete",
