@@ -395,8 +395,7 @@ footer .copyright {
 }
 
 .btn-primary {
-  background-color: #0085A1;
-  border-color: #0085A1;
+border-color: #0085A1; 
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
@@ -406,6 +405,18 @@ footer .copyright {
 }
 
 .btn-lg {
-  font-size: 16px;
-  padding: 25px 35px;
+  font-size: 10px;
+  padding: 20px 30px;
+}
+.btn-danger {
+ 
+  border-color: #0085A1; 
+  margin-left: 20px;
+  }
+  .btn-danger {
+    border-color:red; 
+    }
+
+.card{
+  margin-left: 10%;
 }
