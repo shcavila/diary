@@ -22,7 +22,7 @@
     rel='stylesheet' type='text/css'>
 
   <!-- Custom styles for this template -->
-  <link href="css/clean-blog.min.css" rel="stylesheet">
+  <!-- <link href="css/clean-blog.min.css" rel="stylesheet"> -->
   <link href="css/clean-blog.css" rel="stylesheet">
 
 </head>
@@ -45,13 +45,7 @@
             <a class="nav-link" href="index.html">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="about.html">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="post.html">Sample Post</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contact</a>
+            <a href="#newEntry" data-toggle="modal" data-target="#newEntry" class="nav-link">Add New Entry</a>
           </li>
         </ul>
       </div>
@@ -78,6 +72,33 @@
 
   <!-- Post Content -->
   <div class="content"></div>
+  <div class="modal" id="newEntry">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Entry</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!-- modal body -->
+        <div class="modal-body">
+          <span>Title</span>
+          <br>
+          <input class="form-control" type="text" id="title" />
+          <br>
+          <textarea class="form-control" rows="5" placeholder="Type here" id="body"></textarea>
+          <br>
+          <input type="file" id="img" name="photo" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnAdd">Add</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="myModal">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -91,11 +112,11 @@
           <div class="modal-body">
             <span>Title</span>
             <br>
-            <input class="form-control" type="text" id="title" />
+            <input class="form-control" type="text" id="updateTitle" />
             <br>
-            <textarea class="form-control" rows="5" placeholder="Type here" id="body"></textarea>
+            <textarea class="form-control" rows="5" placeholder="Type here" id="updateBody"></textarea>
             <br>
-            <input type="file" id="img" name="photo" />
+            <!-- <input type="file" id="img" name="photo" /> -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-success" id="btnSave">Save</button>
@@ -155,22 +176,15 @@
         type: "GET",
         url: "http://localhost:8081/diary/all",
         success: function (response) {
-          console.log(response)
           $.each(response, function (i) {
-            let data = response[i].img.toString('base64')
-            console.log('data')
-            console.log(data)
-            console.log(response[i]._id)
-            //console.log(JSON.stringify(response[i].img))
-            var templateString = `<div class="card w-75"><h5 class="card-header text-center">${response[i].title}</h5><div class="card-body"><p>${response[i].body}</p><button class="btn btn-primary " id="${response[i]._id}">Update</button><button class="btn btn-danger" id="${response[i]._id}">Delete</button></div></div> <br>`
+            let date = new Date(Date.parse(response[i].createdAt))
+            var templateString = `<div class="card w-75" id="${response[i]._id}"><div class="card-header text-center  ">${date.toUTCString}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response[i].img}" class ="center"  height="200px" width="200px"/><p>${response[i].body}</p><br><br><button class="btn btn-outline-primary btnUpdate " id="${response[i]._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response[i]._id}">Delete</button></div></div> <br>`
             $('.content').append(templateString);
           })
-          console.log(response[0])
-          console.log(response[0].toString('base64'))
         }
       });
       var entryID;
-      $(document).on('click', '.btn-primary', function () {
+      $(document).on('click', '.btnUpdate', function () {
         entryID = {
           id: $(this).attr('id')
         }
@@ -182,16 +196,16 @@
           success: function (response) {
             console.log(response)
             $('#myModal').modal('show');
-            $('#title').val(response.title)
-            $('#body').val(response.body)
+            $('#updateTitle').val(response.title)
+            $('#updateBody').val(response.body)
           }
         });
 
     });
 
     $(document).on('click', '#btnSave', function () {
-      let title = $('#title').val()
-      let body = $('#body').val()
+      let title = $('#updateTitle').val()
+      let body = $('#updateBody').val()
       let data = {
         title:title,
         body:body
@@ -202,14 +216,17 @@
           dataType:'json',
           data: data,
           success: function (response) {
-            console.log(response)
+            $(`#${response._id}`).remove()
+            var templateString = `<div class="card w-75" id="${response._id}"><div class="card-header text-center bg-primary">${response.title}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response.img}" class ="center"  height="200px" width="200px"/><p>${response.body}</p><br><br><button type="button" class="btn btn-outline-primary btnUpdate" id="${response._id}">Update</button><button type="button" class="btn btn-outline-danger btnDelete" id="${response._id}">Delete</button></div></div><br>`
+            $('.content').append(templateString);
+            $('#myModal').modal('hide');
           }
         });
 
     });
     
 
-    $(document).on('click', '.btn-danger', function () {
+    $(document).on('click', '.btnDelete', function () {
         let data= {
           id: $(this).attr('id')
         }
@@ -219,11 +236,34 @@
           dataType:'json',
           data: data,
           success: function (response) {
-            console.log(response)
+            console.log(`#${response._id}`)
+             $(`#${response._id}`).remove()
           }
         });
 
     });
+
+     $('#btnAdd').click(function (e) {
+        e.preventDefault()
+        let title = $('#title').val();
+        let body = $('#body').val();
+        let fd = new FormData();
+        var files = $('#img')[0].files[0];
+        fd.append('img', files);
+        fd.append('title',title)
+        fd.append('body',body)
+        $.ajax({
+          url: 'http://localhost:8081/diary/add',
+          type: 'POST',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            var templateString = `<div class="card w-75" id="${response[i]._id}"><div class="card-header text-center  ">${response[i].title}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response[i].img}" class ="center"  height="200px" width="200px"/><p>${response[i].body}</p><br><br><button class="btn btn-outline-primary btnUpdate " id="${response[i]._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response[i]._id}">Delete</button></div></div> <br>`
+            $(templateString).prependTo('.content');
+          },
+        });
+      });
   })
   </script>
 

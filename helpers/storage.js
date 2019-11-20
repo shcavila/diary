@@ -20,10 +20,11 @@ const multer = require('multer');
 module.exports = {
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, '../img');
+            cb(null, '../public/uploads');
         },
         filename: function (req, file, cb) {
-            cb(null, file.fieldname + '-' + Date.now())
+            console.log(file.fieldname)
+            cb(null, file.fieldname + '-' + Date.now()+'.jpg')
         }
     })
    

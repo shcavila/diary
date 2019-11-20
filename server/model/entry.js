@@ -9,8 +9,17 @@ var entrySchema = new Schema({
         type: String
     },
     img:{
-        type:Buffer,
-        data:String
+       type:String
+    },
+    createdAt:{
+        type: Date,
+        default: new Date(),
+        required: true
+    },
+    editedAt:{
+        type: Date,
+        required: false
     }
+
 });
 module.exports = mongoose.model('Entry', entrySchema);

@@ -383,8 +383,11 @@ footer .copyright {
   margin-bottom: 0;
   text-align: center;
 }
+.btn{
+  float: right;
+}
 
-.btn {
+/* .btn {
   font-size: 14px;
   font-weight: 800;
   padding: 15px 25px;
@@ -407,16 +410,41 @@ border-color: #0085A1;
 .btn-lg {
   font-size: 10px;
   padding: 20px 30px;
+  
 }
 .btn-danger {
+  
  
   border-color: #0085A1; 
   margin-left: 20px;
   }
   .btn-danger {
     border-color:red; 
-    }
+    } */
+.btnDelete{
+  margin-right: 20px;
+}
 
 .card{
   margin-left: 10%;
+   background-color:#d6d3d3;
+   overflow: auto;
+   max-height: 400px;
+  
+}
+.card-header{
+  background-color: #aed3e1;
+
+}
+
+.center {
+  margin-top: 5%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card p{
+  text-indent: 2em;
+  text-align: justify;
 }
