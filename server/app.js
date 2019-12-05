@@ -6,26 +6,9 @@ const port = process.env.PORT || 8081;
 const bodyParser = require('body-parser');
 const store = require('../helpers/storage');
 const multer = require('multer');
-const fs = require('fs');
-const Entry = require('./model/entry');
 const mongoose = require("mongoose");
 
 mongoose.set('useFindAndModify', false);
-
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(express.static('../public'));
-app.use(cors());
-app.use('/diary', userRoute);
-app.use('/static', express.static('../public'));
-
-app.get('/', function (req, res) {
-    res.send('hello world');
-});
-
 var upload = multer({
     storage: store.storage
 });
@@ -40,24 +23,23 @@ mongoose.connect(url,{useNewUrlParser: true,useUnifiedTopology: true  })
     console.log(err);
 });
 
+app.use(bodyParser.json());
 
-app.post('/diary/add', upload.single('img'), (req, res, next) => {
-    console.log(req.body)
-    let data = {
-        title:req.body.title,
-        body:req.body.body,
-        img: req.file.filename
-    };
-    let entry = new Entry(data );
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(express.static('../public'));
+app.use(cors());
+app.use('/static', express.static('../public'));
 
-    entry.save()
-    .then(() => {
-        res.json({message:"Successfull"});
-        console.log('saved')
-    }).catch((err) => {
-        res.status(400).json({err:err.message   })
-    });
+
+app.get('/', function (req, res) {
+    res.send('hello world');
 });
+
+app.use('/diary',upload.single('img'), userRoute);
+
+
 
 app.listen(port, function (err) {
     console.log(`listening to port ${port}`);

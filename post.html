@@ -53,7 +53,7 @@
   </nav>
 
   <!-- Page Header -->
-  <header class="masthead" style="background-image: url('img/post-bg.jpg')">
+  <header class="masthead">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
@@ -177,8 +177,14 @@
         url: "http://localhost:8081/diary/all",
         success: function (response) {
           $.each(response, function (i) {
-            let date = new Date(Date.parse(response[i].createdAt))
-            var templateString = `<div class="card w-75" id="${response[i]._id}"><div class="card-header text-center  ">${date.toUTCString}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response[i].img}" class ="center"  height="200px" width="200px"/><p>${response[i].body}</p><br><br><button class="btn btn-outline-primary btnUpdate " id="${response[i]._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response[i]._id}">Delete</button></div></div> <br>`
+            let date = new Date(response[i].createdAt)
+            let templateString;
+            findate = `${date.getFullYear()}-${date.getMonth()}-${ date.getDate()} ${date.getHours()}:${date.getMinutes()}`
+            if(response[i].img == null){
+              templateString = `<div class="card w-75" id="${response[i]._id}"><div class="card-header text-center  ">${findate}</div><p>${response[i].body}</p><br><button class="btn btn-outline-primary btnUpdate " id="${response[i]._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response[i]._id}">Delete</button></div></div> <br>`
+            }else{
+               templateString = `<div class="card w-75" id="${response[i]._id}"><div class="card-header text-center  ">${findate}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response[i].img}" class ="center"  height="200px" width="200px"/><p>${response[i].body}</p><br><br><button class="btn btn-outline-primary btnUpdate " id="${response[i]._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response[i]._id}">Delete</button></div></div> <br>`
+            }
             $('.content').append(templateString);
           })
         }
@@ -259,8 +265,9 @@
           contentType: false,
           processData: false,
           success: function (response) {
-            var templateString = `<div class="card w-75" id="${response[i]._id}"><div class="card-header text-center  ">${response[i].title}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response[i].img}" class ="center"  height="200px" width="200px"/><p>${response[i].body}</p><br><br><button class="btn btn-outline-primary btnUpdate " id="${response[i]._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response[i]._id}">Delete</button></div></div> <br>`
+            var templateString = `<div class="card w-75" id="${response._id}"><div class="card-header text-center  ">${response.title}</div><div class="card-body"> <img src="http://localhost:8081/static/uploads/${response.img}" class ="center"  height="200px" width="200px"/><p>${response.body}</p><br><br><button class="btn btn-outline-primary btnUpdate " id="${response._id}">Update</button><button class="btn btn-outline-danger btnDelete" id="${response._id}">Delete</button></div></div> <br>`
             $(templateString).prependTo('.content');
+            $('#newEntry').modal('hide');
           },
         });
       });

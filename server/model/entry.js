@@ -3,13 +3,16 @@ var Schema = mongoose.Schema;
 
 var entrySchema = new Schema({
     title:{
-        type: String
+        type: String,
+        required:false
     },
     body: {
-        type: String
+        type: String,
+        required: true
     },
     img:{
-       type:String
+       type:String,
+       required:false
     },
     createdAt:{
         type: Date,
